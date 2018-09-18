@@ -10,27 +10,28 @@ import UIKit
 
 class AYTextHelper: NSObject {
     
-    var textStorage: NSTextStorage?
-    var layoutManager: NSLayoutManager?
-    var textContainer: NSTextContainer?
+    private lazy var textStorage: NSTextStorage = { NSTextStorage() }()
+    
+    private lazy var layoutManager: NSLayoutManager = { NSLayoutManager() }()
+    
+    private lazy var textContainer: NSTextContainer = { NSTextContainer() }()
     
     override init() {
         super.init()
-        textStorage = NSTextStorage()
-        layoutManager = NSLayoutManager()
-        textContainer = NSTextContainer()
-        textStorage?.addLayoutManager(layoutManager!)
-        layoutManager?.addTextContainer(textContainer!)
+        
+        textStorage.addLayoutManager(layoutManager)
+        layoutManager.addTextContainer(textContainer)
     }
     
     func select(location: CGPoint, label: UILabel, selectedBlock: @escaping (Int, NSAttributedString) -> ()) {
         var location = location
-        textContainer?.size = label.bounds.size
-        textContainer?.lineFragmentPadding = 0
-        textContainer?.maximumNumberOfLines = label.numberOfLines
-        textContainer?.lineBreakMode = label.lineBreakMode
         
-        let attributedText: NSMutableAttributedString = NSMutableAttributedString(attributedString: label.attributedText!)
+        textContainer.size = label.bounds.size
+        textContainer.lineFragmentPadding = 0
+        textContainer.maximumNumberOfLines = label.numberOfLines
+        textContainer.lineBreakMode = label.lineBreakMode
+        
+        let attributedText: NSMutableAttributedString = NSMutableAttributedString(attributedString: label.attributedText ?? NSAttributedString())
         let textRange: NSRange = NSRange(location: 0, length: attributedText.length)
         attributedText.addAttribute(NSAttributedStringKey.font, value: label.font, range: textRange)
         
@@ -38,22 +39,24 @@ class AYTextHelper: NSObject {
         paragraphStyle.alignment = label.textAlignment
         attributedText.addAttribute(NSAttributedStringKey.paragraphStyle, value: paragraphStyle, range: textRange)
         
-        textStorage?.setAttributedString(attributedText)
+        textStorage.setAttributedString(attributedText)
         
-        let textSize: CGSize = layoutManager?.usedRect(for: textContainer ?? NSTextContainer()).size ?? CGSize.zero
+        let textSize: CGSize = layoutManager.usedRect(for: textContainer).size
         location.y -= (label.frame.size.height - textSize.height)/2
         
-        let glyphIndex: Int = layoutManager?.glyphIndex(for: location, in: textContainer ?? NSTextContainer()) ?? 0
+        let glyphIndex: Int = layoutManager.glyphIndex(for: location, in: textContainer)
         
         let fontPointSize: CGFloat = label.font.pointSize
-        layoutManager?.setAttachmentSize(CGSize.init(width: fontPointSize, height: fontPointSize), forGlyphRange: NSRange.init(location: (label.text?.count ?? 1) - 1, length: 1))
+        layoutManager.setAttachmentSize(CGSize(width: fontPointSize, height: fontPointSize), forGlyphRange: NSRange(location: (label.text?.count ?? 1) - 1, length: 1))
         
-        let attributedSubstring: NSMutableAttributedString = label.attributedText?.attributedSubstring(from: NSRange.init(location: glyphIndex, length: 1)) as! NSMutableAttributedString
+        guard let attributedSubstring = label.attributedText?.attributedSubstring(from: NSRange(location: glyphIndex, length: 1)) else {
+            return selectedBlock(-1, NSAttributedString())
+        }
         
-        let glyphRect: CGRect = (layoutManager?.boundingRect(forGlyphRange: NSRange.init(location: glyphIndex, length: 1), in: textContainer ?? NSTextContainer()))!
+        let glyphRect: CGRect = (layoutManager.boundingRect(forGlyphRange: NSRange(location: glyphIndex, length: 1), in: textContainer))
         
-        if !glyphRect.contains(location) {
-            selectedBlock(-1, NSAttributedString())
+        guard glyphRect.contains(location) else {
+            return selectedBlock(-1, NSAttributedString())
         }
         selectedBlock(glyphIndex, attributedSubstring)
     }
@@ -82,7 +85,7 @@ extension UILabel {
     
     public func setTap(block: @escaping (Int, NSAttributedString) -> ()) {
         objc_setAssociatedObject(self, &TapBlock, block, .OBJC_ASSOCIATION_COPY)
-        self.isUserInteractionEnabled = true
+        isUserInteractionEnabled = true
         ay_textHelper = AYTextHelper()
         let tapGestureRecognizer: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(tapAction(tap:)))
         addGestureRecognizer(tapGestureRecognizer)
@@ -90,11 +93,11 @@ extension UILabel {
     
     @objc private func tapAction(tap: UITapGestureRecognizer) {
         let location: CGPoint = tap.location(in: tap.view)
-        
-        ay_textHelper.select(location: location, label: tap.view as! UILabel, selectedBlock: {[weak self] (index, charAttributedString) in
-            if self?.ay_tapBlock != nil {
-                self?.ay_tapBlock(index, charAttributedString)
-            }
-        })
+        if let lable = tap.view as? UILabel {
+            ay_textHelper.select(location: location, label: lable, selectedBlock: { [weak self] (index, charAttributedString) in
+                guard let `self` = self else { return }
+                self.ay_tapBlock(index, charAttributedString)
+            })
+        }
     }
 }
