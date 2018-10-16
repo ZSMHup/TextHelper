@@ -12,7 +12,6 @@
 		E187791820AAD3C20084C662 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E187791620AAD3C20084C662 /* Main.storyboard */; };
 		E187791A20AAD3C20084C662 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E187791920AAD3C20084C662 /* Assets.xcassets */; };
 		E187791D20AAD3C20084C662 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E187791B20AAD3C20084C662 /* LaunchScreen.storyboard */; };
-		E187792520AAD3E30084C662 /* AYTextHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = E187792420AAD3E30084C662 /* AYTextHelper.swift */; };
 		E1AA039A2150D8E7009E2163 /* TextHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1AA03992150D8E7009E2163 /* TextHelper.swift */; };
 /* End PBXBuildFile section */
 
@@ -24,7 +23,6 @@
 		E187791920AAD3C20084C662 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		E187791C20AAD3C20084C662 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		E187791E20AAD3C20084C662 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		E187792420AAD3E30084C662 /* AYTextHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AYTextHelper.swift; sourceTree = "<group>"; };
 		E1AA03992150D8E7009E2163 /* TextHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextHelper.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -60,7 +58,6 @@
 			children = (
 				E187791220AAD3C20084C662 /* AppDelegate.swift */,
 				E187791420AAD3C20084C662 /* ViewController.swift */,
-				E187792420AAD3E30084C662 /* AYTextHelper.swift */,
 				E1AA03992150D8E7009E2163 /* TextHelper.swift */,
 				E187791620AAD3C20084C662 /* Main.storyboard */,
 				E187791920AAD3C20084C662 /* Assets.xcassets */,
@@ -143,7 +140,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				E1AA039A2150D8E7009E2163 /* TextHelper.swift in Sources */,
-				E187792520AAD3E30084C662 /* AYTextHelper.swift in Sources */,
 				E187791520AAD3C20084C662 /* ViewController.swift in Sources */,
 				E187791320AAD3C20084C662 /* AppDelegate.swift in Sources */,
 			);
